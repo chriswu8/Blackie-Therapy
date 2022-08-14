@@ -1,6 +1,7 @@
 const app = require ("express")();
 const server = require("http").createServer(app);
 const cors = require("cors");
+const { Socket } = require("socket.io");
 const io = require("socket.io")(server, {
   cors: {
     origin: "*",
@@ -16,3 +17,23 @@ app.get("/", (req, res) => {
 });
 
 server.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+
+// ===================================================================
+
+io.on('connection', (socket) => {
+
+  // emits a "me" message
+  socket.emit('me', socket.id);
+
+  socket.on('disconnect', () => {
+    socket.broadcast.emit("call ended");
+  });
+
+  socket.on('callUser', ({userToCall, signalData, from, name})=> {
+    io.to(userToCall.emit("callUser", {signal: signalData, from, name}));
+  });
+
+  socket.on("answerCall", (data) => {
+      io.to(data.to).emit("accepted call", data.signal);
+  });
+});
