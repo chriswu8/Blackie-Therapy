@@ -27,8 +27,7 @@ const useStyles = makeStyles((theme) => ({
   wrapper: {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
-    width: '100%',
+    alignItems: 'center'
   },
 }));
 
